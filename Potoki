@@ -1,0 +1,72 @@
+// Отработка темы многопоточности
+// создание потока исполнения с помощью интерфейса Раннейбл
+
+import javax.swing.table.TableRowSorter;
+
+class Runn implements Runnable{
+    String name;
+    Thread t;
+    Runn (String name){
+        this.name = name;
+        t = new Thread(this, name);
+        //System.out.println("Первый дочерний поток создан");
+        t.start();
+    }
+    public void run(){
+        try{
+            for(int x = 1; x < 11; x++){
+                System.out.println(name + x);
+                Thread.sleep(500);
+            }
+        }catch (InterruptedException e){
+            System.out.println("ERROR " + e);
+        }
+        //System.out.println("Первый дочерний поток завершен.");
+    }
+}
+
+//создание потока путем расширения класса Thread
+class Thre extends Thread{
+    Thre(){
+        super("Второй дочерний поток. ");
+        //System.out.println("Второй дочерний поток " + this);
+        start();
+    }
+        public void run(){
+                try{
+                    Thread.sleep(100);
+                    for(int x = 1; x < 11; x++){
+                        System.out.println("Второй дочерний поток " + x);
+                        Thread.sleep(500);
+                    }
+                }catch (InterruptedException e){
+                    System.out.println("Error : " + e);
+                }
+            //System.out.println("Второй дочерний поток завершен.");
+        }
+}
+//    * * * M A I N * * *
+public class Potoki {
+    public static void main(String[] args) {
+
+        Thread t = Thread.currentThread();
+        //System.out.println("Главный поток " + t);
+        t.setName(":: Главный потокич :: ");
+        //System.out.println("Главный поток " + t);
+        Thre the = new Thre();
+        Runn runner = new Runn("Первый поток ");
+
+        try {
+            runner.t.join();
+            the.join();
+            for (int x = 1; x < 11; x++){
+                System.out.print(x + " ");
+                Thread.sleep(500);
+            }
+        } catch (InterruptedException e){
+            System.out.println("!!! ERROR !!!");
+        }finally {
+            System.out.println("! ! ! )(The End)( ! ! !");
+        }
+    }
+}
